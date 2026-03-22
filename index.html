@@ -449,11 +449,10 @@
         answer = a + b;
         currentProblem = { text: `${a} + ${b}`, answer };
       } else {
-        // Subtraction: (answer + random 1-9) - num = answer
-        // This ensures answer is always a single digit (0-9)
-        answer = num; // The target answer (0-9)
-        const subtractAmount = Math.floor(Math.random() * 10) + 1; // 1-10
-        a = answer + subtractAmount;
+        // Subtraction: subtract num (0-9), answer is single digit
+        // Generate a random answer (0-9), then add num to get the first number
+        answer = Math.floor(Math.random() * 10); // 0-9
+        a = answer + num; // e.g., 5 + 3 = 8, so 8 - 3 = 5
         b = num;
         currentProblem = { text: `${a} - ${b}`, answer };
       }
