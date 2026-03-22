@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Facts Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 500px;
+      padding: 30px;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+    
+    .screen {
+      display: none;
+    }
+    
+    .screen.active {
+      display: block;
+    }
+    
+    /* Setup Screen */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #444;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f5f5f5;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    
+    .checkbox-item:hover {
+      background: #eee;
+    }
+    
+    .checkbox-item.selected {
+      background: #667eea;
+      color: white;
+    }
+    
+    .checkbox-item input {
+      display: none;
+    }
+    
+    .number-select {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .number-btn {
+      width: 50px;
+      height: 50px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      background: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .number-btn:hover {
+      border-color: #667eea;
+    }
+    
+    .number-btn.selected {
+      background: #667eea;
+      border-color: #667eea;
+      color: white;
+    }
+    
+    .goal-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    
+    .goal-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    
+    .btn:hover {
+      background: #5a6fd6;
+      transform: translateY(-2px);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    /* Practice Screen */
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #eee;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      text-align: center;
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+    
+    .milestone-badge {
+      display: inline-block;
+      background: #ffd700;
+      color: #333;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      animation: bounce 0.5s ease;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    
+    .flashcard {
+      background: linear-gradient(145deg, #ffffff, #f0f0f0);
+      border-radius: 20px;
+      padding: 40px 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .problem {
+      font-size: 3rem;
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .answer-input {
+      width: 120px;
+      padding: 12px;
+      border: 3px solid #667eea;
+      border-radius: 12px;
+      font-size: 1.5rem;
+      text-align: center;
+      outline: none;
+    }
+    
+    .answer-input:focus {
+      border-color: #764ba2;
+    }
+    
+    .answer-input.correct {
+      border-color: #10b981;
+      background: #d1fae5;
+    }
+    
+    .answer-input.wrong {
+      border-color: #ef4444;
+      background: #fee2e2;
+    }
+    
+    .feedback {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      height: 25px;
+    }
+    
+    .feedback.correct {
+      color: #10b981;
+    }
+    
+    .feedback.wrong {
+      color: #ef4444;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .btn-secondary {
+      background: #e5e5e5;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background: #d5d5d5;
+    }
+    
+    /* Results Screen */
+    .results {
+      text-align: center;
+    }
+    
+    .results h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    
+    .results .score {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #667eea;
+      margin: 20px 0;
+    }
+    
+    .results .stats {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    
+    .celebration {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      animation: celebrate 0.5s ease infinite alternate;
+    }
+    
+    @keyframes celebrate {
+      from { transform: rotate(-10deg) scale(1); }
+      to { transform: rotate(10deg) scale(1.1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen active">
+      <h1>🧮 Math Facts Practice</h1>
+      
+      <div class="form-group">
+        <label>Operation</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item selected" data-op="addition">
+            <input type="checkbox" checked> ➕ Addition
+          </label>
+          <label class="checkbox-item" data-op="subtraction">
+            <input type="checkbox"> ➖ Subtraction
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Numbers to Practice</label>
+        <div class="number-select" id="number-select">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Goal (number of facts)</label>
+        <input type="number" class="goal-input" id="goal-input" value="100" min="10" max="500">
+      </div>
+      
+      <button class="btn" onclick="startPractice()">Start Practice</button>
+    </div>
+    
+    <!-- Practice Screen -->
+    <div id="practice-screen" class="screen">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0 / 100</div>
+      
+      <div id="milestone-badge" class="milestone-badge" style="display: none;"></div>
+      
+      <div class="flashcard">
+        <div class="problem" id="problem">5 + 3</div>
+        <input type="number" class="answer-input" id="answer-input" placeholder="?" autocomplete="off">
+        <div class="feedback" id="feedback"></div>
+      </div>
+      
+      <div class="controls">
+        <button class="btn btn-secondary" onclick="endPractice()">End Practice</button>
+      </div>
+    </div>
+    
+    <!-- Results Screen -->
+    <div id="results-screen" class="screen">
+      <div class="results">
+        <div class="celebration" id="celebration">🎉</div>
+        <h2>Practice Complete!</h2>
+        <div class="score" id="score">85%</div>
+        <div class="stats" id="stats">85 correct out of 100</div>
+        <button class="btn" onclick="resetPractice()">Practice Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let selectedOperations = ['addition'];
+    let selectedNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let goal = 100;
+    let currentProblem = null;
+    let correctCount = 0;
+    let totalCount = 0;
+    let lastMilestone = 0;
+    
+    // Milestones
+    const milestones = [20, 40, 60, 80, 100];
+    const encouragement = {
+      20: "Great start! 🌟",
+      40: "You're on fire! 🔥",
+      60: "Halfway there! 🚀",
+      80: "Almost done! 💪",
+      100: "AMAZING! 🎯"
+    };
+    
+    // Generate number buttons
+    const numberSelect = document.getElementById('number-select');
+    for (let i = 1; i <= 12; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'number-btn' + (i <= 9 ? ' selected' : '');
+      btn.textContent = i;
+      btn.onclick = () => toggleNumber(btn, i);
+      numberSelect.appendChild(btn);
+    }
+    
+    // Operation toggle
+    document.querySelectorAll('.checkbox-item').forEach(item => {
+      item.onclick = () => {
+        item.classList.toggle('selected');
+        const input = item.querySelector('input');
+        input.checked = !input.checked;
+        const op = item.dataset.op;
+        if (input.checked) {
+          if (!selectedOperations.includes(op)) selectedOperations.push(op);
+        } else {
+          selectedOperations = selectedOperations.filter(o => o !== op);
+        }
+        // Ensure at least one operation
+        if (selectedOperations.length === 0) {
+          selectedOperations = ['addition'];
+          document.querySelector('[data-op="addition"]').classList.add('selected');
+          document.querySelector('[data-op="addition"]').querySelector('input').checked = true;
+        }
+      };
+    });
+    
+    function toggleNumber(btn, num) {
+      btn.classList.toggle('selected');
+      if (selectedNumbers.includes(num)) {
+        selectedNumbers = selectedNumbers.filter(n => n !== num);
+      } else {
+        selectedNumbers.push(num);
+      }
+      // Ensure at least one number
+      if (selectedNumbers.length === 0) {
+        selectedNumbers = [1];
+        numberSelect.querySelector('.number-btn').classList.add('selected');
+      }
+    }
+    
+    function generateProblem() {
+      const operation = selectedOperations[Math.floor(Math.random() * selectedOperations.length)];
+      const num = selectedNumbers[Math.floor(Math.random() * selectedNumbers.length)];
+      
+      let a, b, answer;
+      
+      if (operation === 'addition') {
+        a = Math.floor(Math.random() * 10) + 1;
+        b = num;
+        answer = a + b;
+        currentProblem = { text: `${a} + ${b}`, answer };
+      } else {
+        a = Math.floor(Math.random() * 10) + num;
+        b = num;
+        answer = a - b;
+        currentProblem = { text: `${a} - ${b}`, answer };
+      }
+      
+      document.getElementById('problem').textContent = currentProblem.text;
+    }
+    
+    function checkAnswer() {
+      const input = document.getElementById('answer-input');
+      const feedback = document.getElementById('feedback');
+      const userAnswer = parseInt(input.value);
+      
+      if (isNaN(userAnswer)) return;
+      
+      totalCount++;
+      
+      if (userAnswer === currentProblem.answer) {
+        correctCount++;
+        input.classList.add('correct');
+        input.classList.remove('wrong');
+        feedback.textContent = '✓ Correct!';
+        feedback.className = 'feedback correct';
+      } else {
+        input.classList.add('wrong');
+        input.classList.remove('correct');
+        feedback.textContent = `✗ Answer: ${currentProblem.answer}`;
+        feedback.className = 'feedback wrong';
+      }
+      
+      updateProgress();
+      
+      // Next problem after short delay
+      setTimeout(() => {
+        input.value = '';
+        input.classList.remove('correct', 'wrong');
+        feedback.textContent = '';
+        
+        if (totalCount >= goal) {
+          showResults();
+        } else {
+          generateProblem();
+          input.focus();
+        }
+      }, 1000);
+    }
+    
+    function updateProgress() {
+      const percent = (totalCount / goal) * 100;
+      document.getElementById('progress-fill').style.width = percent + '%';
+      document.getElementById('progress-text').textContent = `${totalCount} / ${goal}`;
+      
+      // Check milestones
+      milestones.forEach(m => {
+        if (totalCount >= m && lastMilestone < m) {
+          lastMilestone = m;
+          showMilestone(m);
+        }
+      });
+    }
+    
+    function showMilestone(m) {
+      const badge = document.getElementById('milestone-badge');
+      badge.textContent = encouragement[m];
+      badge.style.display = 'inline-block';
+      setTimeout(() => {
+        badge.style.display = 'none';
+      }, 2000);
+    }
+    
+    function startPractice() {
+      goal = parseInt(document.getElementById('goal-input').value) || 100;
+      goal = Math.max(10, Math.min(500, goal));
+      
+      selectedOperations = [];
+      document.querySelectorAll('.checkbox-item.selected').forEach(item => {
+        selectedOperations.push(item.dataset.op);
+      });
+      
+      if (selectedOperations.length === 0) selectedOperations = ['addition'];
+      
+      selectedNumbers = [];
+      document.querySelectorAll('.number-btn.selected').forEach(btn => {
+        selectedNumbers.push(parseInt(btn.textContent));
+      });
+      
+      if (selectedNumbers.length === 0) selectedNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      
+      // Reset state
+      correctCount = 0;
+      totalCount = 0;
+      lastMilestone = 0;
+      
+      document.getElementById('setup-screen').classList.remove('active');
+      document.getElementById('practice-screen').classList.add('active');
+      
+      updateProgress();
+      generateProblem();
+      document.getElementById('answer-input').focus();
+    }
+    
+    function endPractice() {
+      showResults();
+    }
+    
+    function showResults() {
+      document.getElementById('practice-screen').classList.remove('active');
+      document.getElementById('results-screen').classList.add('active');
+      
+      const percent = Math.round((correctCount / totalCount) * 100);
+      document.getElementById('score').textContent = percent + '%';
+      document.getElementById('stats').textContent = `${correctCount} correct out of ${totalCount}`;
+      
+      // Celebration based on score
+      const celebration = document.getElementById('celebration');
+      if (percent >= 90) {
+        celebration.textContent = '🏆';
+      } else if (percent >= 70) {
+        celebration.textContent = '🎉';
+      } else {
+        celebration.textContent = '👍';
+      }
+    }
+    
+    function resetPractice() {
+      document.getElementById('results-screen').classList.remove('active');
+      document.getElementById('setup-screen').classList.add('active');
+    }
+    
+    // Enter key to submit
+    document.getElementById('answer-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        checkAnswer();
+      }
+    });
+  </script>
+</body>
+</html>
