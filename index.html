@@ -386,12 +386,13 @@
       100: "AMAZING! 🎯"
     };
     
-    // Generate number buttons (0-9 for subtraction with single-digit answers)
+    // Generate number buttons (0-9 for subtraction, 1-9 for addition)
     const numberSelect = document.getElementById('number-select');
     for (let i = 0; i <= 9; i++) {
       const btn = document.createElement('button');
-      btn.className = 'number-btn' + (i >= 1 && i <= 9 ? ' selected' : '');
-      btn.textContent = i === 0 ? '0' : '+' + i;
+      // Default to 1-9 for both (subtraction uses 1-9, so max is 9+9=18)
+      btn.className = 'number-btn' + (i >= 1 ? ' selected' : '');
+      btn.textContent = i === 0 ? '0' : (selectedOperations.includes('subtraction') ? '-' + i : '+' + i);
       btn.onclick = () => toggleNumber(btn, i);
       numberSelect.appendChild(btn);
     }
@@ -414,13 +415,21 @@
           document.querySelector('[data-op="addition"]').classList.add('selected');
           document.querySelector('[data-op="addition"]').querySelector('input').checked = true;
         }
-        // Update number label based on operation
-        const hasSubtraction = selectedOperations.includes('subtraction');
-        document.getElementById('number-label').textContent = hasSubtraction 
-          ? 'Answers (0-9)' 
-          : 'Numbers to Practice (+1 to +9)';
-      };
-    });
+      // Update number label and button labels based on operation
+      const hasSubtraction = selectedOperations.includes('subtraction');
+      document.getElementById('number-label').textContent = hasSubtraction 
+        ? 'Subtract (0-9, max 18)' 
+        : 'Add (+1 to +9)';
+      
+      // Update button labels
+      document.querySelectorAll('.number-btn').forEach((btn, idx) => {
+        if (idx === 0) {
+          btn.textContent = hasSubtraction ? '-0' : '+0';
+        } else {
+          btn.textContent = hasSubtraction ? '-' + idx : '+' + idx;
+        }
+      });
+    };
     
     function toggleNumber(btn, num) {
       btn.classList.toggle('selected');
@@ -449,10 +458,10 @@
         answer = a + b;
         currentProblem = { text: `${a} + ${b}`, answer };
       } else {
-        // Subtraction: subtract num (0-9), answer is single digit
-        // Generate a random answer (0-9), then add num to get the first number
+        // Subtraction: answer (0-9) + num, answer is single digit
+        // Max first number is 18 (so 18-9, 17-8, etc.)
         answer = Math.floor(Math.random() * 10); // 0-9
-        a = answer + num; // e.g., 5 + 3 = 8, so 8 - 3 = 5
+        a = answer + num; // e.g., 5 + 9 = 14, so 14 - 9 = 5
         b = num;
         currentProblem = { text: `${a} - ${b}`, answer };
       }
