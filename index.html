@@ -662,22 +662,33 @@
     
     // Operation toggle
     document.querySelectorAll('.checkbox-item[data-op]').forEach(item => {
-      item.onclick = () => {
-        item.classList.toggle('selected');
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
         const input = item.querySelector('input');
-        input.checked = !input.checked;
-        const op = item.dataset.op;
-        if (input.checked) {
-          if (!selectedOperations.includes(op)) selectedOperations.push(op);
+        const isSelected = item.classList.contains('selected');
+        
+        // Toggle visual state
+        if (isSelected) {
+          item.classList.remove('selected');
+          input.checked = false;
         } else {
-          selectedOperations = selectedOperations.filter(o => o !== op);
+          item.classList.add('selected');
+          input.checked = true;
         }
+        
+        // Update selectedOperations array
+        selectedOperations = [];
+        document.querySelectorAll('.checkbox-item[data-op].selected').forEach(i => {
+          selectedOperations.push(i.dataset.op);
+        });
+        
         // Ensure at least one operation
         if (selectedOperations.length === 0) {
           selectedOperations = ['addition'];
           document.querySelector('[data-op="addition"]').classList.add('selected');
           document.querySelector('[data-op="addition"]').querySelector('input').checked = true;
         }
+        
         // Update number label and button labels based on operation
         const hasSubtraction = selectedOperations.includes('subtraction');
         document.getElementById('number-label').textContent = hasSubtraction 
@@ -692,7 +703,7 @@
             btn.textContent = hasSubtraction ? '-' + idx : '+' + idx;
           }
         });
-      };
+      });
     });
     
     // Theme toggle
