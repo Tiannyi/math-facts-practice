@@ -562,32 +562,16 @@
       
       <div class="form-group">
         <label>Theme</label>
-        <div class="checkbox-group" id="theme-select">
-          <label class="checkbox-item selected" data-theme="default">
-            <input type="radio" name="theme" checked> 🌈 Default
-          </label>
-          <label class="checkbox-item" data-theme="kpop">
-            <input type="radio" name="theme"> 🖤 K-pop Demon Hunter
-          </label>
-          <label class="checkbox-item" data-theme="mcqueen">
-            <input type="radio" name="theme"> ⚡ Lightning McQueen
-          </label>
-          <label class="checkbox-item" data-theme="ocean">
-            <input type="radio" name="theme"> 🌊 Ocean
-          </label>
-          <label class="checkbox-item" data-theme="sunset">
-            <input type="radio" name="theme"> 🌅 Sunset
-          </label>
-          <label class="checkbox-item" data-theme="frozen">
-            <input type="radio" name="theme"> ❄️ Frozen
-          </label>
-          <label class="checkbox-item" data-theme="mario">
-            <input type="radio" name="theme"> 🍄 Mario
-          </label>
-          <label class="checkbox-item" data-theme="zootopia">
-            <input type="radio" name="theme"> 🦊 Zootopia
-          </label>
-        </div>
+        <select id="theme-select" class="goal-input" style="text-align: center;">
+          <option value="default">🌈 Default</option>
+          <option value="kpop">🖤 K-pop Demon Hunter</option>
+          <option value="mcqueen">⚡ Lightning McQueen</option>
+          <option value="ocean">🌊 Ocean</option>
+          <option value="sunset">🌅 Sunset</option>
+          <option value="frozen">❄️ Frozen</option>
+          <option value="mario">🍄 Mario</option>
+          <option value="zootopia">🦊 Zootopia</option>
+        </select>
       </div>
       
       <button class="btn" onclick="startPractice()">Start Practice</button>
@@ -707,25 +691,7 @@
       });
     });
     
-    // Theme toggle
-    document.querySelectorAll('.checkbox-item[data-theme]').forEach(item => {
-      item.onclick = () => {
-        document.querySelectorAll('.checkbox-item[data-theme]').forEach(i => {
-          i.classList.remove('selected');
-          i.querySelector('input').checked = false;
-        });
-        item.classList.add('selected');
-        item.querySelector('input').checked = true;
-        
-        // Remove all theme classes
-        document.body.className = '';
-        // Add selected theme
-        const theme = item.dataset.theme;
-        if (theme !== 'default') {
-          document.body.classList.add('theme-' + theme);
-        }
-      };
-    });
+    // Theme selection from dropdown
     
     function toggleNumber(btn, num) {
       btn.classList.toggle('selected');
@@ -845,9 +811,8 @@
       goal = parseInt(document.getElementById('goal-input').value) || 100;
       goal = Math.max(10, Math.min(500, goal));
       
-      // Get selected theme
-      const selectedThemeItem = document.querySelector('.checkbox-item[data-theme].selected');
-      selectedTheme = selectedThemeItem ? selectedThemeItem.dataset.theme : 'default';
+      // Get selected theme from dropdown
+      selectedTheme = document.getElementById('theme-select').value || 'default';
       
       // Apply theme to body
       document.body.className = selectedTheme === 'default' ? '' : 'theme-' + selectedTheme;
@@ -913,12 +878,7 @@
       document.getElementById('setup-screen').classList.add('active');
       // Reset theme to default
       document.body.className = '';
-      document.querySelectorAll('.checkbox-item[data-theme]').forEach(i => {
-        i.classList.remove('selected');
-        i.querySelector('input').checked = false;
-      });
-      document.querySelector('[data-theme="default"]').classList.add('selected');
-      document.querySelector('[data-theme="default"]').querySelector('input').checked = true;
+      document.getElementById('theme-select').value = 'default';
     }
     
     // Enter key to submit
