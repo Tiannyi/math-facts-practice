@@ -437,10 +437,35 @@
     }
     
     .problem {
-      font-size: 3rem;
+      font-size: 2.8rem;
       color: #333;
       font-weight: bold;
       margin-bottom: 8px;
+      text-align: center;
+      line-height: 1.4;
+    }
+    
+    .problem-vertical {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .problem-vertical .num1 {
+      padding-bottom: 5px;
+      margin-bottom: 5px;
+      width: 100%;
+      text-align: center;
+      border-bottom: 3px solid inherit;
+    }
+    
+    .problem-vertical .operator {
+      font-size: 1.8rem;
+      margin: 2px 0;
+    }
+    
+    .problem-vertical .num2 {
+      margin-top: 2px;
     }
     
     .answer-input {
@@ -495,6 +520,10 @@
     
     .hint-btn:hover {
       background: #f59e0b;
+    }
+    
+    #hint-text {
+      color: #666 !important;
     }
     
     .controls {
@@ -608,7 +637,7 @@
         
         <div id="milestone-badge" class="milestone-badge" style="display: none;"></div>
         
-        <div class="problem" id="problem">5 + 3</div>
+        <div id="problem" class="problem"></div>
         <input type="number" class="answer-input" id="answer-input" placeholder="?" autocomplete="off">
         <div style="color: #888; font-size: 0.85rem; margin-top: 8px;">Press Enter to submit</div>
         <div class="feedback" id="feedback"></div>
@@ -735,17 +764,33 @@
         a = Math.floor(Math.random() * 10) + 1;
         b = num;
         answer = a + b;
-        currentProblem = { text: `${a} + ${b}`, answer };
+        currentProblem = { text: `${a} + ${b}`, answer, a, b, op: 'addition' };
       } else {
         // Subtraction: use positive value of num
         const absNum = Math.abs(num); // Convert -1 to 1, -2 to 2, etc.
         answer = Math.floor(Math.random() * 10); // 0-9
         a = answer + absNum; // e.g., 5 + 9 = 14, so 14 - 9 = 5
         b = absNum;
-        currentProblem = { text: `${a} - ${b}`, answer };
+        currentProblem = { text: `${a} - ${b}`, answer, a, b, op: 'subtraction' };
       }
       
-      document.getElementById('problem').textContent = currentProblem.text;
+      // Render problem vertically
+      const problemEl = document.getElementById('problem');
+      if (currentProblem.op === 'addition') {
+        problemEl.className = 'problem problem-vertical';
+        problemEl.innerHTML = `
+          <div class="num1">${a}</div>
+          <div class="operator">+ ${b}</div>
+          <div class="num2">?</div>
+        `;
+      } else {
+        problemEl.className = 'problem problem-vertical';
+        problemEl.innerHTML = `
+          <div class="num1">${a}</div>
+          <div class="operator">- ${b}</div>
+          <div class="num2">?</div>
+        `;
+      }
       
       // Reset hint visibility
       document.getElementById('hint-btn').style.display = 'none';
@@ -765,7 +810,12 @@
         4: '#3b82f6',  // blue
         5: '#8b5cf6'   // purple
       };
-      document.getElementById('problem').style.color = colors[colorStage];
+      const color = colors[colorStage];
+      problemEl.style.color = color;
+      
+      // Apply color to border
+      const num1 = problemEl.querySelector('.num1');
+      if (num1) num1.style.borderBottomColor = color;
     }
     
     function checkAnswer() {
@@ -869,23 +919,19 @@
     
     // Show hint for subtraction problems
     function showHint() {
-      if (!currentProblem) return;
-      
-      const operation = selectedOperations[0];
-      if (operation !== 'subtraction') return;
+      if (!currentProblem || currentProblem.op !== 'subtraction') return;
       
       // Get the subtraction numbers
-      const problemText = currentProblem.text; // e.g., "14 - 9"
-      const match = problemText.match(/(\d+)\s*-\s*(\d+)/);
-      if (!match) return;
-      
-      const a = parseInt(match[1]);
-      const b = parseInt(match[2]);
+      const a = currentProblem.a;
+      const b = currentProblem.b;
       
       // Show addition hint: 9 + ? = 14
-      const hintText = `${b} + ? = ${a}`;
       const hintEl = document.getElementById('hint-text');
-      hintEl.textContent = hintText;
+      hintEl.innerHTML = `<div class="problem-vertical" style="font-size: 1.2rem;">
+        <div class="num1" style="border-bottom: 2px solid #666;">${b}</div>
+        <div class="operator">+ ?</div>
+        <div class="num2">${a}</div>
+      </div>`;
       hintEl.style.display = 'block';
       
       // Hide hint button after showing
