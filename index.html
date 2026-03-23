@@ -751,6 +751,15 @@
       
       totalCount++;
       
+      // Encouraging messages for wrong answers
+      const encouragingMessages = [
+        'Nice try! 💪',
+        'Almost! 🌟',
+        'Keep going! 🚀',
+        'You got this! 💖',
+        'Good effort! 🎉'
+      ];
+      
       if (userAnswer === currentProblem.answer) {
         correctCount++;
         streak++;
@@ -766,7 +775,9 @@
         }
       } else {
         streak = 0;
-        document.getElementById('streak-text').textContent = '';
+        // Show encouraging message instead of streak broken
+        const encouragingMsg = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+        document.getElementById('streak-text').textContent = encouragingMsg;
         input.classList.add('wrong');
         input.classList.remove('correct');
         feedback.textContent = `✗ Answer: ${currentProblem.answer}`;
