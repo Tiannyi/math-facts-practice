@@ -175,6 +175,15 @@
       font-size: 0.95rem;
     }
     
+    .streak-text {
+      text-align: center;
+      color: #f59e0b;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      min-height: 24px;
+    }
+    
     .milestone-badge {
       display: inline-block;
       background: #ffd700;
@@ -191,6 +200,13 @@
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.2); }
     }
+    
+    /* Progress colors */
+    .progress-fill.color-1 { background: linear-gradient(90deg, #667eea, #764ba2); }
+    .progress-fill.color-2 { background: linear-gradient(90deg, #10b981, #059669); }
+    .progress-fill.color-3 { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .progress-fill.color-4 { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    .progress-fill.color-5 { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
     
     .flashcard {
       background: linear-gradient(145deg, #ffffff, #f0f0f0);
@@ -339,6 +355,7 @@
         <div class="progress-fill" id="progress-fill"></div>
       </div>
       <div class="progress-text" id="progress-text">0 / 100</div>
+      <div class="streak-text" id="streak-text"></div>
       
       <div id="milestone-badge" class="milestone-badge" style="display: none;"></div>
       
@@ -375,6 +392,8 @@
     let correctCount = 0;
     let totalCount = 0;
     let lastMilestone = 0;
+    let streak = 0;
+    let bestStreak = 0;
     
     // Milestones
     const milestones = [20, 40, 60, 80, 100];
@@ -480,11 +499,20 @@
       
       if (userAnswer === currentProblem.answer) {
         correctCount++;
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
         input.classList.add('correct');
         input.classList.remove('wrong');
         feedback.textContent = '✓ Correct!';
         feedback.className = 'feedback correct';
+        
+        // Show streak
+        if (streak >= 3) {
+          document.getElementById('streak-text').textContent = '🔥 ' + streak + ' streak!';
+        }
       } else {
+        streak = 0;
+        document.getElementById('streak-text').textContent = '';
         input.classList.add('wrong');
         input.classList.remove('correct');
         feedback.textContent = `✗ Answer: ${currentProblem.answer}`;
@@ -510,8 +538,13 @@
     
     function updateProgress() {
       const percent = (totalCount / goal) * 100;
-      document.getElementById('progress-fill').style.width = percent + '%';
+      const progressFill = document.getElementById('progress-fill');
+      progressFill.style.width = percent + '%';
       document.getElementById('progress-text').textContent = `${totalCount} / ${goal}`;
+      
+      // Change color every 20 facts
+      const colorStage = Math.min(Math.floor(totalCount / 20) + 1, 5);
+      progressFill.className = 'progress-fill color-' + colorStage;
       
       // Check milestones
       milestones.forEach(m => {
@@ -553,6 +586,10 @@
       correctCount = 0;
       totalCount = 0;
       lastMilestone = 0;
+      streak = 0;
+      bestStreak = 0;
+      document.getElementById('streak-text').textContent = '';
+      document.getElementById('progress-fill').className = 'progress-fill color-1';
       
       document.getElementById('setup-screen').classList.remove('active');
       document.getElementById('practice-screen').classList.add('active');
@@ -572,7 +609,7 @@
       
       const percent = Math.round((correctCount / totalCount) * 100);
       document.getElementById('score').textContent = percent + '%';
-      document.getElementById('stats').textContent = `${correctCount} correct out of ${totalCount}`;
+      document.getElementById('stats').textContent = `${correctCount} correct out of ${totalCount}` + (bestStreak > 0 ? ` | Best streak: ${bestStreak}` : '');
       
       // Celebration based on score
       const celebration = document.getElementById('celebration');
