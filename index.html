@@ -453,14 +453,20 @@
     
     .problem-vertical .num1 {
       padding-bottom: 5px;
-      margin-bottom: 5px;
+      margin-bottom: 0;
       width: 100%;
       text-align: center;
-      border-bottom: 3px solid inherit;
     }
     
     .problem-vertical .operator {
       font-size: 1.8rem;
+      margin: 2px 0;
+    }
+    
+    .problem-vertical .hline {
+      width: 100%;
+      height: 3px;
+      background-color: currentColor;
       margin: 2px 0;
     }
     
@@ -505,6 +511,28 @@
     
     .feedback.wrong {
       color: #ef4444;
+    }
+    
+    .hint-btn {
+      margin-top: 10px;
+      padding: 8px 20px;
+      background: #fbbf24;
+      color: #333;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    .hint-btn:hover {
+      background: #f59e0b;
+    }
+    
+    #hint-text {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: #666;
+      font-weight: bold;
     }
     
     .controls {
@@ -622,6 +650,8 @@
         <input type="number" class="answer-input" id="answer-input" placeholder="?" autocomplete="off">
         <div style="color: #888; font-size: 0.85rem; margin-top: 8px;">Press Enter to submit</div>
         <div class="feedback" id="feedback"></div>
+        <button id="hint-btn" class="hint-btn" onclick="showHint()" style="display: none;">💡 Hint</button>
+        <div id="hint-text" style="display: none; margin-top: 10px; font-size: 1.2rem; color: #666;"></div>
       </div>
       
       <div class="controls">
@@ -760,6 +790,7 @@
         problemEl.innerHTML = `
           <div class="num1">${a}</div>
           <div class="operator">+ ${b}</div>
+          <div class="hline"></div>
           <div class="num2">?</div>
         `;
       } else {
@@ -767,8 +798,15 @@
         problemEl.innerHTML = `
           <div class="num1">${a}</div>
           <div class="operator">- ${b}</div>
+          <div class="hline"></div>
           <div class="num2">?</div>
         `;
+      }
+      
+      // Show hint button only for subtraction
+      if (operation === 'subtraction') {
+        document.getElementById('hint-btn').style.display = 'inline-block';
+        document.getElementById('hint-text').style.display = 'none';
       }
       
       // Set initial color
@@ -885,6 +923,23 @@
       setTimeout(() => {
         badge.style.display = 'none';
       }, 2000);
+    }
+    
+    // Show hint for subtraction problems
+    function showHint() {
+      if (!currentProblem || currentProblem.op !== 'subtraction') return;
+      
+      // Get the subtraction numbers
+      const a = currentProblem.a;
+      const b = currentProblem.b;
+      
+      // Show horizontal addition hint: 9 + ? = 14
+      const hintEl = document.getElementById('hint-text');
+      hintEl.textContent = `${b} + ? = ${a}`;
+      hintEl.style.display = 'block';
+      
+      // Hide hint button after showing
+      document.getElementById('hint-btn').style.display = 'none';
     }
     
     function startPractice() {
