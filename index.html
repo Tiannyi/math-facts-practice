@@ -660,34 +660,29 @@
       numberSelect.appendChild(btn);
     }
     
-    // Operation toggle
+    // Operation toggle - mutually exclusive (radio behavior)
     document.querySelectorAll('.checkbox-item[data-op]').forEach(item => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
-        const input = item.querySelector('input');
-        const isSelected = item.classList.contains('selected');
         
-        // Toggle visual state
-        if (isSelected) {
-          item.classList.remove('selected');
-          input.checked = false;
-        } else {
-          item.classList.add('selected');
-          input.checked = true;
+        // Get the operation being selected
+        const op = item.dataset.op;
+        
+        // If clicking on already selected, don't deselect (keep at least one)
+        if (item.classList.contains('selected') && document.querySelectorAll('.checkbox-item[data-op].selected').length === 1) {
+          return;
         }
         
-        // Update selectedOperations array
-        selectedOperations = [];
-        document.querySelectorAll('.checkbox-item[data-op].selected').forEach(i => {
-          selectedOperations.push(i.dataset.op);
+        // Deselect all operation checkboxes first
+        document.querySelectorAll('.checkbox-item[data-op]').forEach(i => {
+          i.classList.remove('selected');
+          i.querySelector('input').checked = false;
         });
         
-        // Ensure at least one operation
-        if (selectedOperations.length === 0) {
-          selectedOperations = ['addition'];
-          document.querySelector('[data-op="addition"]').classList.add('selected');
-          document.querySelector('[data-op="addition"]').querySelector('input').checked = true;
-        }
+        // Select the clicked one
+        item.classList.add('selected');
+        item.querySelector('input').checked = true;
+        selectedOperations = [op];
         
         // Update number label and button labels based on operation
         const hasSubtraction = selectedOperations.includes('subtraction');
