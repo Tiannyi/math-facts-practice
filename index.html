@@ -39,7 +39,7 @@
     h1 {
       text-align: center;
       color: #333;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       font-size: 1.8rem;
     }
     
@@ -53,7 +53,7 @@
     
     /* Setup Screen */
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 8px;
     }
     
     label {
@@ -168,24 +168,24 @@
     /* Practice Screen */
     .progress-bar {
       width: 100%;
-      height: 10px;
+      height: 8px;
       background: #eee;
-      border-radius: 5px;
-      margin-bottom: 15px;
+      border-radius: 4px;
+      margin-bottom: 8px;
       overflow: hidden;
     }
     
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, #667eea, #764ba2);
-      border-radius: 5px;
+      border-radius: 4px;
       transition: width 0.3s ease;
     }
     
     .progress-text {
       text-align: center;
       color: #666;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       font-size: 0.95rem;
     }
     
@@ -206,7 +206,7 @@
       border-radius: 20px;
       font-weight: bold;
       font-size: 0.9rem;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       animation: bounce 0.5s ease;
     }
     
@@ -425,11 +425,11 @@
     .flashcard {
       background: linear-gradient(145deg, #ffffff, #f0f0f0);
       border-radius: 20px;
-      padding: 40px 20px;
+      padding: 20px;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      min-height: 200px;
+      margin-bottom: 8px;
+      min-height: 320px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -440,7 +440,7 @@
       font-size: 3rem;
       color: #333;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
     }
     
     .answer-input {
@@ -520,7 +520,7 @@
     
     .celebration {
       font-size: 3rem;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       animation: celebrate 0.5s ease infinite alternate;
     }
     
@@ -600,15 +600,15 @@
     
     <!-- Practice Screen -->
     <div id="practice-screen" class="screen">
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-      <div class="progress-text" id="progress-text">0 / 100</div>
-      <div class="streak-text" id="streak-text"></div>
-      
-      <div id="milestone-badge" class="milestone-badge" style="display: none;"></div>
-      
       <div class="flashcard">
+        <div class="progress-bar" style="width: 100%; margin-bottom: 10px;">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text" style="margin-bottom: 5px;">0 / 100</div>
+        <div class="streak-text" id="streak-text"></div>
+        
+        <div id="milestone-badge" class="milestone-badge" style="display: none;"></div>
+        
         <div class="problem" id="problem">5 + 3</div>
         <input type="number" class="answer-input" id="answer-input" placeholder="?" autocomplete="off">
         <div style="color: #888; font-size: 0.85rem; margin-top: 8px;">Press Enter to submit</div>
