@@ -729,11 +729,11 @@
         answer = a + b;
         currentProblem = { text: `${a} + ${b}`, answer };
       } else {
-        // Subtraction: answer (0-9) + num, answer is single digit
-        // Max first number is 18 (so 18-9, 17-8, etc.)
+        // Subtraction: use positive value of num
+        const absNum = Math.abs(num); // Convert -1 to 1, -2 to 2, etc.
         answer = Math.floor(Math.random() * 10); // 0-9
-        a = answer + num; // e.g., 5 + 9 = 14, so 14 - 9 = 5
-        b = num;
+        a = answer + absNum; // e.g., 5 + 9 = 14, so 14 - 9 = 5
+        b = absNum;
         currentProblem = { text: `${a} - ${b}`, answer };
       }
       
@@ -836,8 +836,8 @@
       
       selectedNumbers = [];
       document.querySelectorAll('.number-btn.selected').forEach(btn => {
-        // Extract number from text like "+1" or "-3"
-        const num = parseInt(btn.textContent.replace(/[^0-9-]/g, ''));
+        // Extract number from text like "+1" or "-3" - always convert to positive
+        const num = Math.abs(parseInt(btn.textContent.replace(/[^0-9-]/g, '')));
         if (!isNaN(num)) selectedNumbers.push(num);
       });
       
